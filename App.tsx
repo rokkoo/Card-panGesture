@@ -50,8 +50,8 @@ export default function App() {
          velocity: velocity.y,
          state,
       }),
-      // -HEIGHT * cards.length + visibleCards * HEIGHT * 0.2,
-      -HEIGHT * cards.length + visibleCards * HEIGHT,
+      -HEIGHT * cards.length + visibleCards * HEIGHT * 0.2,
+      // -HEIGHT * cards.length + visibleCards * HEIGHT,
       0
    );
 
@@ -71,8 +71,8 @@ export default function App() {
             {cards.map(({ type }, index) => {
                const translateY = interpolate(y, {
                   inputRange: [-HEIGHT * index, 0],
-                  // outputRange: [(-HEIGHT + 48) * index, 0],
-                  outputRange: [-HEIGHT * index, 0],
+                  outputRange: [(-HEIGHT + 48) * index, 0],
+                  // outputRange: [-HEIGHT * index, 0],
                   extrapolate: Extrapolate.CLAMP,
                });
 

@@ -6,7 +6,7 @@ const ratio = 228 / 362;
 
 console.log({ width });
 
-export const CARD_WIDTH = width * 0.8;
+export const CARD_WIDTH = width * 0.6;
 
 export const CARD_HEIGHT = CARD_WIDTH * ratio;
 console.log({ CARD_WIDTH, ratio, CARD_HEIGHT });

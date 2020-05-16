@@ -6,6 +6,7 @@ import Animated, {
    diffClamp,
    interpolate,
    Extrapolate,
+   add,
 } from 'react-native-reanimated';
 import {
    usePanGestureHandler,
@@ -22,6 +23,24 @@ const { height } = Dimensions.get('window');
 const HEIGHT = CARD_HEIGHT + MARGIN * 2;
 
 const cards = [
+   { type: Cards.Card1 },
+   { type: Cards.Card2 },
+   { type: Cards.Card3 },
+   { type: Cards.Card4 },
+   { type: Cards.Card5 },
+   { type: Cards.Card6 },
+   { type: Cards.Card1 },
+   { type: Cards.Card2 },
+   { type: Cards.Card3 },
+   { type: Cards.Card4 },
+   { type: Cards.Card5 },
+   { type: Cards.Card6 },
+   { type: Cards.Card1 },
+   { type: Cards.Card2 },
+   { type: Cards.Card3 },
+   { type: Cards.Card4 },
+   { type: Cards.Card5 },
+   { type: Cards.Card6 },
    { type: Cards.Card1 },
    { type: Cards.Card2 },
    { type: Cards.Card3 },
@@ -50,8 +69,8 @@ export default function App() {
          velocity: velocity.y,
          state,
       }),
-      -HEIGHT * cards.length + visibleCards * HEIGHT * 0.2,
-      // -HEIGHT * cards.length + visibleCards * HEIGHT,
+      // -HEIGHT * cards.length + visibleCards * HEIGHT * 0.2,
+      -HEIGHT * cards.length + visibleCards * HEIGHT,
       0
    );
 
@@ -69,17 +88,49 @@ export default function App() {
             }}
          >
             {cards.map(({ type }, index) => {
-               const translateY = interpolate(y, {
-                  inputRange: [-HEIGHT * index, 0],
-                  outputRange: [(-HEIGHT + 48) * index, 0],
-                  // outputRange: [-HEIGHT * index, 0],
+               const positionY = add(y, index * HEIGHT);
+               const isDesappearing = -HEIGHT;
+               const isTop = 0;
+               const isBottom = HEIGHT * (visibleCards - 1);
+               const isAppearing = HEIGHT * visibleCards;
+
+               const translateYwithScale = interpolate(positionY, {
+                  inputRange: [isBottom, isAppearing],
+                  outputRange: [0, -HEIGHT / 4],
+                  extrapolate: Extrapolate.CLAMP,
+               });
+               const translateY = add(
+                  interpolate(y, {
+                     inputRange: [-HEIGHT * index, 0],
+                     // outputRange: [(-HEIGHT + 48) * index, 0],
+                     outputRange: [-HEIGHT * index, 0],
+                     extrapolate: Extrapolate.CLAMP,
+                  }),
+                  translateYwithScale
+               );
+
+               const scale = interpolate(positionY, {
+                  inputRange: [isDesappearing, isTop, isBottom, isAppearing],
+                  outputRange: [0.5, 1, 1, 0.5],
+                  extrapolate: Extrapolate.CLAMP,
+               });
+
+               const opacity = interpolate(positionY, {
+                  inputRange: [isDesappearing, isTop, isBottom, isAppearing],
+                  outputRange: [0, 1, 1, 0],
                   extrapolate: Extrapolate.CLAMP,
                });
 
                return (
                   <Animated.View
                      key={index}
-                     style={[styles.card, { transform: [{ translateY }] }]}
+                     style={[
+                        styles.card,
+                        {
+                           opacity,
+                           transform: [{ translateY }, { scale }],
+                        },
+                     ]}
                   >
                      <Card {...{ type }} />
                   </Animated.View>
@@ -94,7 +145,7 @@ const styles = StyleSheet.create({
    container: {
       ...StyleSheet.absoluteFillObject,
       alignItems: 'center',
-      marginTop: MARGIN,
+      marginTop: 16 * 2,
    },
    card: {
       marginVertical: MARGIN,
